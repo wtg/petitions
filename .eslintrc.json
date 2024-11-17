@@ -17,7 +17,8 @@
 		"curly": "error",
 		"semi": "error",
 		"no-trailing-spaces": "error",
-		"indent": ["error", 4]
+		"indent": ["error", 4],
+		"quotes": ["error", "single"]
 	},
 	"globals": { 
 		"React": true 
