@@ -39,8 +39,9 @@ export default {
       },
 
       fontFamily: {
-        'display': ['Nunito', 'sans-serif'],
-        'body': ['Roboto', 'Poppins', 'sans-serif'],
+        'display': ['Nunito', 'serif'],
+        'body': ['Lato', 'sans-serif'],
+        'sans-serif': ['Roboto', 'Poppins', 'sans-serif']
       }
     },
   },
