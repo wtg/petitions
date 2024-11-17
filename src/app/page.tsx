@@ -6,6 +6,9 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+    if (metadata.title) {
+        return true;
+    }
     return (
         <h1>Hello World</h1>
     );
