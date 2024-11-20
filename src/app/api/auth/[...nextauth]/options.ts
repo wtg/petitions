@@ -1,4 +1,7 @@
-import type { NextAuthOptions } from 'next-auth';
+import { getUserFromDb } from '@/actions/user.actions';
+import { db } from '@/lib/db';
+import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import type { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 export const options: NextAuthOptions = {
@@ -18,20 +21,20 @@ export const options: NextAuthOptions = {
                 }
             },
 
-            // change this to await/async once we get a db
-            authorize(credentials) {
-                const user = {
-                    id: '1',
-                    name: 'dev',
-                    password: 'dev'
-                };
+            async authorize(credentials) {
+                let user = null;
 
-                if(credentials?.username === user.name && credentials?.password === user.password) {
-                    return user;
+                user = await getUserFromDb(credentials?.username as string, credentials?.password as string);
+
+                if(!user.success) {
+                    return null;
                 }
 
-                return null;
+                return {
+                    name: user.data?.username
+                } as User;
             }
         })
     ],
+    adapter: DrizzleAdapter(db)
 };
