@@ -34,7 +34,26 @@ export const options: NextAuthOptions = {
                     name: user.data?.username
                 } as User;
             }
-        })
+        }),
+        {
+            id: 'shib',
+            name: 'RPI SSO',
+            type: 'oauth',
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            wellKnown: 'https://shib.auth.rpi.edu/.well-known/openid-configuration',
+            authorization: { params: { scope: 'openid email profile' } },
+            idToken: true,
+            checks: ['pkce', 'state'],
+            profile(profile) {
+                return {
+                    id: profile.sub,
+                    name: profile.name,
+                    email: profile.email,
+                    image: profile.picture,
+                };
+            },
+        }
     ],
     adapter: DrizzleAdapter(db)
 };
