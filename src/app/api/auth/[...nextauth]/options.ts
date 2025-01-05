@@ -4,6 +4,13 @@ import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import type { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
+interface Profile {
+    sub: string,
+    name: string,
+    email: string,
+    picture: string,
+}
+
 export const options: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -45,7 +52,7 @@ export const options: NextAuthOptions = {
             authorization: { params: { scope: 'openid email profile' } },
             idToken: true,
             checks: ['pkce', 'state'],
-            profile(profile) {
+            profile(profile: Profile) {
                 return {
                     id: profile.sub,
                     name: profile.name,
