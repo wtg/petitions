@@ -48,10 +48,12 @@ export const options: NextAuthOptions = {
             type: 'oauth',
             clientId: process.env.CLIENT_ID,
             clientSecret: process.env.CLIENT_SECRET,
-            wellKnown: 'https://shib.auth.rpi.edu/',
-            authorization: { params: { scope: 'openid email profile' } },
+            authorization: { url: 'https://shib.auth.rpi.edu/idp/profile/oidc/authorize', params: { scope: 'openid email profile' } },
             idToken: true,
             checks: ['pkce', 'state'],
+            token: {
+                url: 'https://shib.auth.rpi.edu/idp/profile/oidc/token',
+            },
             profile(profile: Profile) {
                 console.log(profile.sub);
                 console.log(profile.name);
@@ -66,7 +68,5 @@ export const options: NextAuthOptions = {
             },
         }
     ],
-    debug: true,
-    secret: process.env.NEXTAUTH_SECRET,
     adapter: DrizzleAdapter(db)
 };
