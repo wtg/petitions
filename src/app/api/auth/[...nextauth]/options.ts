@@ -66,5 +66,7 @@ export const options: NextAuthOptions = {
             },
         }
     ],
+    debug: true,
+    secret: process.env.NEXTAUTH_SECRET,
     adapter: DrizzleAdapter(db)
 };
