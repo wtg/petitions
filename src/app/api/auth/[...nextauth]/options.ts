@@ -48,7 +48,7 @@ export const options: NextAuthOptions = {
             type: 'oauth',
             clientId: process.env.CLIENT_ID,
             clientSecret: process.env.CLIENT_SECRET,
-            wellKnown: 'https://shib.auth.rpi.edu/.well-known/openid-configuration',
+            wellKnown: 'https://shib.auth.rpi.edu/idp/profile/oidc/configuration',
             authorization: { params: { scope: 'openid email profile' } },
             idToken: true,
             checks: ['pkce', 'state'],
