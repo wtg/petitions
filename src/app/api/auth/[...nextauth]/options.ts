@@ -53,6 +53,10 @@ export const options: NextAuthOptions = {
             idToken: true,
             checks: ['pkce', 'state'],
             profile(profile: Profile) {
+                console.log(profile.sub);
+                console.log(profile.name);
+                console.log(profile.email);
+                console.log(profile.picture);
                 return {
                     id: profile.sub,
                     name: profile.name,
