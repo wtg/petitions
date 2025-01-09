@@ -53,6 +53,7 @@ export const options: NextAuthOptions = {
             checks: ['pkce', 'state'],
             token: {
                 url: 'https://shib.auth.rpi.edu/idp/profile/oidc/token',
+                params: { grant_type: 'authorization_code' }
             },
             profile(profile: Profile) {
                 console.log(profile.sub);
