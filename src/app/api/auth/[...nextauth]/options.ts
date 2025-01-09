@@ -59,6 +59,7 @@ export const options: NextAuthOptions = {
                 params: { grant_type: 'authorization_code' }
             },
             issuer: 'https://shib.auth.rpi.edu',
+            jwks_endpoint: 'https://shib.auth.rpi.edu/idp/profile/oidc/keyset',
             profile(profile: Profile) {
                 console.log(profile.sub);
                 console.log(profile.name);
