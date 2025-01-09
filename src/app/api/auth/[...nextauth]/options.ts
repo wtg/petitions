@@ -48,13 +48,17 @@ export const options: NextAuthOptions = {
             type: 'oauth',
             clientId: process.env.CLIENT_ID,
             clientSecret: process.env.CLIENT_SECRET,
-            authorization: { url: 'https://shib.auth.rpi.edu/idp/profile/oidc/authorize', params: { scope: 'openid email profile' } },
+            authorization: {
+                url: 'https://shib.auth.rpi.edu/idp/profile/oidc/authorize',
+                params: { scope: 'openid email profile' }
+            },
             idToken: true,
             checks: ['pkce', 'state'],
             token: {
                 url: 'https://shib.auth.rpi.edu/idp/profile/oidc/token',
                 params: { grant_type: 'authorization_code' }
             },
+            issuer: 'https://shib.auth.rpi.edu',
             profile(profile: Profile) {
                 console.log(profile.sub);
                 console.log(profile.name);
