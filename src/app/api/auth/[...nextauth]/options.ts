@@ -61,6 +61,7 @@ export const options: NextAuthOptions = {
             issuer: 'https://shib.auth.rpi.edu',
             jwks_endpoint: 'https://shib.auth.rpi.edu/idp/profile/oidc/keyset',
             profile(profile: Profile) {
+                console.log(profile);
                 console.log(profile.sub);
                 console.log(profile.name);
                 console.log(profile.email);
