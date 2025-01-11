@@ -1,5 +1,15 @@
-import type { NextAuthOptions } from 'next-auth';
+import { getUserFromDb } from '@/actions/user.actions';
+import { db } from '@/lib/db';
+import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import type { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+
+interface Profile {
+    sub: string,
+    name: string,
+    email: string,
+    picture: string,
+}
 
 export const options: NextAuthOptions = {
     providers: [
@@ -18,20 +28,56 @@ export const options: NextAuthOptions = {
                 }
             },
 
-            // change this to await/async once we get a db
-            authorize(credentials) {
-                const user = {
-                    id: '1',
-                    name: 'dev',
-                    password: 'dev'
-                };
+            async authorize(credentials) {
+                let user = null;
 
-                if(credentials?.username === user.name && credentials?.password === user.password) {
-                    return user;
+                user = await getUserFromDb(credentials?.username as string, credentials?.password as string);
+
+                if(!user.success) {
+                    return null;
                 }
 
-                return null;
+                return {
+                    name: user.data?.username
+                } as User;
             }
-        })
+        }),
+        {
+            id: 'shib',
+            name: 'RPI SSO',
+            type: 'oauth',
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            authorization: {
+                url: 'https://shib.auth.rpi.edu/idp/profile/oidc/authorize',
+                params: { scope: 'openid email profile' }
+            },
+            idToken: true,
+            checks: ['pkce', 'state'],
+            token: {
+                url: 'https://shib.auth.rpi.edu/idp/profile/oidc/token',
+                params: { grant_type: 'authorization_code' }
+            },
+            issuer: 'https://shib.auth.rpi.edu',
+            jwks_endpoint: 'https://shib.auth.rpi.edu/idp/profile/oidc/keyset',
+            userinfo: {
+                url: 'https://shib.auth.rpi.edu/idp/profile/oidc/userinfo',
+                params: { grant_type: 'authorization_code' }
+            },
+            profile(profile: Profile) {
+                console.log(profile);
+                console.log(profile.sub);
+                console.log(profile.name);
+                console.log(profile.email);
+                console.log(profile.picture);
+                return {
+                    id: profile.sub,
+                    name: profile.name,
+                    email: profile.email,
+                    image: profile.picture,
+                };
+            },
+        }
     ],
+    adapter: DrizzleAdapter(db)
 };
