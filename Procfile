@@ -1,1 +1,1 @@
-web: npm start
+web: npx drizzle push && npm start
