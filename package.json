@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npx drizzle-kit push && next dev",
     "build": "next build",
-    "start": "npx drizzle-kit push && next start",
+    "start": "npx drizzle-kit --force push && next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix"
   },
