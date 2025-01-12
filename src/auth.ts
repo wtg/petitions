@@ -91,7 +91,8 @@ const authConfig: NextAuthConfig = {
             session.user.id = token.id as string;
             return session;
         }
-    }
+    },
+    debug: true
 };
 
 export const { auth, handlers, signIn, signOut } = NextAuth(authConfig);
