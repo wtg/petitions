@@ -18,23 +18,20 @@ const authConfig: NextAuthConfig = {
                 username: { label: "Username" },
                 password: { label: "password" }
             },
-            authorize: async (credentials) => {
-                let user = null;
+            async authorize(credentials) {
 
-                user = await getUserFromDb(credentials.username as string, credentials.password as string);
+                const { username, password } = credentials;
 
-                if(!user.success) {
-                    throw new Error(user.message as string);
+                const res = await getUserFromDb(username as string, password as string);
+
+                if(res.success) {
+                    return {
+                        id: res.data?.id,
+                        username: res.data?.username
+                    };
                 }
 
-                console.log({
-                    id: user.data?.id,
-                    username: user.data?.username
-                });
-                return {
-                    id: user.data?.id,
-                    username: user.data?.username
-                };
+                return null;
             }
         }),
         {
