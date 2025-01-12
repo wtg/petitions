@@ -4,10 +4,10 @@ import { db } from '@/lib/db';
 import { users } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 
-export async function getUserFromDb(username: string, password: string) {
+export async function getUserFromDb(name: string, password: string) {
     try {
         const existedUser = await db.query.users.findFirst({
-            where: eq(users.username, username)
+            where: eq(users.name, name)
         });
 
         if(!existedUser) {

@@ -15,19 +15,19 @@ const authConfig: NextAuthConfig = {
     providers: [
         Credentials({
             credentials: {
-                username: { label: "Username" },
+                name: { label: "Username" },
                 password: { label: "password" }
             },
             async authorize(credentials) {
 
-                const { username, password } = credentials;
+                const { name, password } = credentials;
 
-                const res = await getUserFromDb(username as string, password as string);
+                const res = await getUserFromDb(name as string, password as string);
 
                 if(res.success) {
                     return {
                         id: res.data?.id,
-                        username: res.data?.username
+                        name: res.data?.name
                     };
                 }
 
