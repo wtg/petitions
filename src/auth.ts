@@ -89,7 +89,6 @@ const authConfig: NextAuthConfig = {
             return session;
         }
     },
-    // debug: true
 };
 
 export const { auth, handlers, signIn, signOut } = NextAuth(authConfig);
