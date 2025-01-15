@@ -1,7 +1,7 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
+// import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { db } from "@/lib/db";
+// import { db } from "@/lib/db";
 import { getUserFromDb } from "./actions/user.actions";
 
 interface Profile {
@@ -70,7 +70,7 @@ const authConfig: NextAuthConfig = {
             },
         }
     ],
-    adapter: DrizzleAdapter(db),
+    // adapter: DrizzleAdapter(db),
     secret: process.env.AUTH_SECRET,
     session: {
         strategy: "jwt",
