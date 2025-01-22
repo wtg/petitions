@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# About
 
-## Getting Started
+RPI Petitions is a web application that is developed by the RPI Student Senate's Web Technologies Group. It aims to bridge the gap between the student body and the Student Senate, allowing the student body to bring up campus-wide concerns.
 
-First, run the development server:
+# Local Development
+Docker and Node are required for local development.
+Run a docker container for a postgres database
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```shell
+docker run --name postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=petitions -p 5432:5432 -d postgres
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+If you run the command exactly, the following will be needed to be added to .env
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+DATABASE_URL="postgres://postgres:password@localhost:5432/petitions"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+In order to push the database schema, run the following command
 
-## Learn More
+```
+npx drizzle-kit push
+```
 
-To learn more about Next.js, take a look at the following resources:
+To add a user, in case I have not figured out how to add seeded users, 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+npx drizzle-kit studio
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+You can insert a user into the users table.
 
-## Deploy on Vercel
+# Server Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## TODO
