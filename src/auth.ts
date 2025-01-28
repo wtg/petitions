@@ -1,8 +1,8 @@
-import { getUserFromDb } from '@/actions/user.actions';
-import { db } from '@/lib/db';
-import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import type { NextAuthOptions, User } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
+// import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import NextAuth, { NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+// import { db } from "@/lib/db";
+import { getUserFromDb } from "./actions/user.actions";
 
 interface Profile {
     sub: string,
@@ -11,35 +11,27 @@ interface Profile {
     picture: string,
 }
 
-export const options: NextAuthOptions = {
+const authConfig: NextAuthConfig = {
     providers: [
-        CredentialsProvider({
-            name: 'Credentials',
+        Credentials({
             credentials: {
-                username: {
-                    label: 'Username:',
-                    type: 'text',
-                    placeholder: 'dev'
-                },
-                password: {
-                    label: 'Password:',
-                    type: 'text',
-                    placeholder: 'dev'
-                }
+                name: { label: "Username" },
+                password: { label: "password" }
             },
-
             async authorize(credentials) {
-                let user = null;
 
-                user = await getUserFromDb(credentials?.username as string, credentials?.password as string);
+                const { name, password } = credentials;
 
-                if(!user.success) {
-                    return null;
+                const res = await getUserFromDb(name as string, password as string);
+
+                if(res.success) {
+                    return {
+                        id: res.data?.id,
+                        name: res.data?.name
+                    };
                 }
 
-                return {
-                    name: user.data?.username
-                } as User;
+                return null;
             }
         }),
         {
@@ -52,7 +44,6 @@ export const options: NextAuthOptions = {
                 url: 'https://shib.auth.rpi.edu/idp/profile/oidc/authorize',
                 params: { scope: 'openid email profile' }
             },
-            idToken: true,
             checks: ['pkce', 'state'],
             token: {
                 url: 'https://shib.auth.rpi.edu/idp/profile/oidc/token',
@@ -79,5 +70,25 @@ export const options: NextAuthOptions = {
             },
         }
     ],
-    adapter: DrizzleAdapter(db)
+    // adapter: DrizzleAdapter(db),
+    secret: process.env.AUTH_SECRET,
+    session: {
+        strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60
+    },
+
+    callbacks: {
+        jwt({ token, user }) {
+            if(user) {
+                token.id = user.id;
+            }
+            return token;
+        },
+        session({ session, token }) {
+            session.user.id = token.id as string;
+            return session;
+        }
+    },
 };
+
+export const { auth, handlers, signIn, signOut } = NextAuth(authConfig);

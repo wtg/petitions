@@ -1,9 +1,9 @@
-import { getServerSession } from 'next-auth';
+import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 
 export default async function ProfilePage() {
-    const session = await getServerSession();
-
+    const session = await auth();
+    console.log(session?.user);
     if(!session) {
         redirect('/api/auth/signin?callbackUrl=/profile');
     }
