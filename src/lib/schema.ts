@@ -1,4 +1,3 @@
-// import { integer, pgTable, primaryKey, text, timestamp } from 'drizzle-orm/pg-core';
 import { pgTable, text } from 'drizzle-orm/pg-core';
 
 export const users = pgTable("users", {
