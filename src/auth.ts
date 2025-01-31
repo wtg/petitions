@@ -68,6 +68,7 @@ const authConfig: NextAuthConfig = {
 
     callbacks: {
         jwt({ token, user }) {
+            console.log('jwt', user);
             if(user) {
                 token.id = user.id;
             }
