@@ -1,13 +1,7 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { getUserFromDb } from "./actions/user.actions";
-
-interface Profile {
-    sub: string,
-    name: string,
-    email: string,
-    picture: string,
-}
+import { Profile, OAuthProfile } from "./lib/OAuthProfile";
 
 const authConfig: NextAuthConfig = {
     providers: [
@@ -25,8 +19,11 @@ const authConfig: NextAuthConfig = {
                 if(res.success) {
                     return {
                         id: res.data?.id,
-                        name: res.data?.name
-                    };
+                        rcsid: res.data?.name,
+                        given_name: 'development',
+                        family_name: 'development',
+                        email: 'development@example.com'
+                    } as Profile;
                 }
 
                 return null;
@@ -53,17 +50,13 @@ const authConfig: NextAuthConfig = {
                 url: 'https://shib.auth.rpi.edu/idp/profile/oidc/userinfo',
                 params: { grant_type: 'authorization_code' }
             },
-            profile(profile: Profile) {
-                console.log(profile);
-                console.log(profile.sub);
-                console.log(profile.name);
-                console.log(profile.email);
-                console.log(profile.picture);
+            profile(profile: OAuthProfile): Profile {
+                console.log('profile', profile);
                 return {
                     id: profile.sub,
-                    name: profile.name,
-                    email: profile.email,
-                    image: profile.picture,
+                    rcsid: profile.preferred_username,
+                    given_name: profile.given_name,
+                    family_name: profile.family_name
                 };
             },
         }
