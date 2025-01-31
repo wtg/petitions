@@ -83,6 +83,10 @@ const authConfig: NextAuthConfig = {
         session({ session, token }) {
             session.user.id = token.id as string;
             return session;
+        },
+        signIn({ user, account, profile }) {
+            console.log('signing in', user, account, profile);
+            return true;
         }
     },
 };
