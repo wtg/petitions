@@ -33,9 +33,9 @@ export const signatures = pgTable("signatures", {
     petitionId: integer()
         .notNull()
         .references(() => petitions.id, { onDelete: "cascade" }),
-}, (table) => ({
-    pk: primaryKey({ columns: [table.userId, table.petitionId] })
-}));
+}, (table) => ([
+    primaryKey({ columns: [table.userId, table.petitionId] })
+]));
 
 export const responses = pgTable("responses", {
     petitionId: integer()
@@ -57,6 +57,6 @@ export const tagRefs = pgTable("tagRefs", {
     petitionId: integer()
         .notNull()
         .references(() => petitions.id, { onDelete: "cascade" }),
-}, (table) => ({
-    pk: primaryKey({ columns: [table.tagId, table.petitionId] })
-}));
+}, (table) => ([
+    primaryKey({ columns: [table.tagId, table.petitionId] })
+]));
