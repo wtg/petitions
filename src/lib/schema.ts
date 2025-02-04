@@ -1,7 +1,5 @@
 import { pgTable, primaryKey, text, serial, timestamp, integer } from 'drizzle-orm/pg-core';
 
-import { AdapterAccountType } from 'next-auth/adapters';
-
 export const users = pgTable("users", {
     id: text("id")
         .primaryKey()
@@ -15,7 +13,7 @@ export const petitions = pgTable("petitions", {
     name: text().notNull(),
     id: serial().primaryKey(),
     description: text().notNull(),
-    author: text().notNull(), 
+    author: text().notNull(),
     creationDate: timestamp()
         .defaultNow()
         .notNull(),
@@ -46,8 +44,8 @@ export const responses = pgTable("responses", {
         .references(() => users.id, { onDelete: "cascade" }),
     response: text().notNull(),
     responseTime: timestamp()
-    .defaultNow()
-    .notNull(),
+        .defaultNow()
+        .notNull(),
 });
 
 export const tagRefs = pgTable("tagRefs", {
