@@ -5,7 +5,7 @@ export default async function ProfilePage() {
     const session = await auth();
     console.log(session?.user);
     if(!session) {
-    redirect('/api/auth/signin?callbackUrl=/profile');
+        redirect('/api/auth/signin?callbackUrl=/profile');
     }
 
     return (
