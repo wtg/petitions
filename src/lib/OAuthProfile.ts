@@ -10,6 +10,5 @@ export interface OAuthProfile {
 export interface Profile {
     id: string,
     rcsid: string,
-    given_name: string,
-    family_name: string,
+    initials?: string,
 }

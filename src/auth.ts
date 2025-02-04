@@ -3,6 +3,13 @@ import Credentials from "next-auth/providers/credentials";
 import { getUserFromDb } from "./actions/user.actions";
 import { Profile, OAuthProfile } from "./lib/OAuthProfile";
 
+declare module "next-auth" {
+    interface User {
+        rcsid?: string;
+        initials?: string;
+    }
+}
+
 const authConfig: NextAuthConfig = {
     providers: [
         Credentials({
@@ -20,9 +27,7 @@ const authConfig: NextAuthConfig = {
                     return {
                         id: res.data?.id,
                         rcsid: res.data?.name,
-                        given_name: 'development',
-                        family_name: 'development',
-                        email: 'development@example.com'
+                        initials: 'dd'
                     } as Profile;
                 }
 
@@ -55,8 +60,7 @@ const authConfig: NextAuthConfig = {
                 return {
                     id: profile.sub,
                     rcsid: profile.preferred_username,
-                    given_name: profile.given_name,
-                    family_name: profile.family_name
+                    initials: `${profile.given_name?.charAt(0)}${profile.family_name?.charAt(0)}`.toUpperCase()
                 };
             },
         }
@@ -67,15 +71,19 @@ const authConfig: NextAuthConfig = {
     },
 
     callbacks: {
-        jwt({ token, user }) {
+        jwt({ token, user}) {
             console.log('jwt', user);
             if(user) {
                 token.id = user.id;
+                token.rcsid = user.rcsid;
+                token.initials = user.initials;
             }
             return token;
         },
         session({ session, token }) {
             session.user.id = token.id as string;
+            session.user.rcsid = token.rcsid as string;
+            session.user.initials = token.initials as string;
             return session;
         },
         signIn({ user, account, profile }) {
