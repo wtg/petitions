@@ -26,7 +26,7 @@ export const tagNames = pgTable("tagNames", {
     tagName: text().notNull(),
 });
 
-export const signatures = pgTable("signatures"{
+export const signatures = pgTable("signatures", {
     userId: text()
         .notNull()
         .references(() => users.id, { onDelete: "cascade" }),
