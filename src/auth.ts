@@ -30,8 +30,6 @@ const authConfig: NextAuthConfig = {
                     where: eq(users.id, rcsid)
                 });
 
-                console.log(existedUser ? true: false);
-
                 if(existedUser) {
                     return {
                         rcsid: existedUser.id,
@@ -68,7 +66,6 @@ const authConfig: NextAuthConfig = {
                 params: { grant_type: 'authorization_code' }
             },
             profile(profile: OAuthProfile): Profile {
-                console.log('profile', profile);
                 return {
                     id: profile.sub,
                     rcsid: profile.preferred_username,
@@ -84,7 +81,6 @@ const authConfig: NextAuthConfig = {
 
     callbacks: {
         jwt({ token, user}) {
-            // console.log('jwt', user);
             if(user) {
                 token.id = user.id;
                 token.rcsid = user.rcsid;
