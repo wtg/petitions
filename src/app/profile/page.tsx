@@ -9,6 +9,6 @@ export default async function ProfilePage() {
     }
 
     return (
-        <h1 className="text-9xl">Hello {session.user?.name}</h1>
+        <h1 className="text-9xl">Hello {session.user?.rcsid}</h1>
     );
 }

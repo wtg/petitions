@@ -1,7 +1,9 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { getUserFromDb } from "./actions/user.actions";
+import { db } from "./lib/db";
 import { Profile, OAuthProfile } from "./lib/OAuthProfile";
+import { eq } from 'drizzle-orm';
+import { users } from '@/lib/schema';
 
 declare module "next-auth" {
     interface User {
@@ -14,24 +16,34 @@ const authConfig: NextAuthConfig = {
     providers: [
         Credentials({
             credentials: {
-                name: { label: "Username" },
-                password: { label: "password" }
+                rcsid: { label: "RCSID", type: "text" }
             },
             async authorize(credentials) {
+                let rcsid = credentials?.rcsid as string;
 
-                const { name, password } = credentials;
+                if(!rcsid) {
+                    rcsid = Math.random().toString(36).substring(2, 8);
+                }
+                rcsid = rcsid.toLowerCase();
 
-                const res = await getUserFromDb(name as string, password as string);
+                const existedUser = await db.query.users.findFirst({
+                    where: eq(users.id, rcsid)
+                });
 
-                if(res.success) {
+                console.log(existedUser ? true: false);
+
+                if(existedUser) {
                     return {
-                        id: res.data?.id,
-                        rcsid: res.data?.name,
-                        initials: 'dd'
+                        rcsid: existedUser.id,
+                        initials: existedUser.initials
                     } as Profile;
                 }
 
-                return null;
+                const initials = Math.random().toString(36).substring(2, 4).toUpperCase();
+                return {
+                    rcsid: rcsid,
+                    initials: initials,
+                } as Profile;
             }
         }),
         {
@@ -72,7 +84,7 @@ const authConfig: NextAuthConfig = {
 
     callbacks: {
         jwt({ token, user}) {
-            console.log('jwt', user);
+            // console.log('jwt', user);
             if(user) {
                 token.id = user.id;
                 token.rcsid = user.rcsid;
@@ -86,8 +98,19 @@ const authConfig: NextAuthConfig = {
             session.user.initials = token.initials as string;
             return session;
         },
-        signIn({ user, account, profile }) {
-            console.log('signing in', user, account, profile);
+        // user means id, rcsid, initials
+        // account means the account itself, the provider, type, id, etc
+        // profile means the oauth profile, should have all the data in OAuthProfile.Profile if it is oauth sign in
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        async signIn({ user, account, profile }) {
+            const rcsid = user.rcsid as string;
+            const initials = user.initials as string;
+
+            await db.insert(users).values({
+                id: rcsid,
+                initials: initials
+            }).onConflictDoNothing();
+
             return true;
         }
     },
