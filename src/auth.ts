@@ -1,10 +1,11 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { db } from "./lib/db";
-import { Profile, OAuthProfile } from "./lib/OAuthProfile";
+import { db } from "@/lib/db";
+import { Profile, OAuthProfile } from "@/lib/OAuthProfile";
 import { eq } from 'drizzle-orm';
 import { users } from '@/lib/schema';
 
+// extends the User object
 declare module "next-auth" {
     interface User {
         rcsid?: string;
@@ -96,7 +97,7 @@ const authConfig: NextAuthConfig = {
         },
         // user means id, rcsid, initials
         // account means the account itself, the provider, type, id, etc
-        // profile means the oauth profile, should have all the data in OAuthProfile.Profile if it is oauth sign in
+        // profile means the oauth profile, should have all the data in OAuthProfile.OAuthProfile if it is oauth sign in
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         async signIn({ user, account, profile }) {
             const rcsid = user.rcsid as string;
