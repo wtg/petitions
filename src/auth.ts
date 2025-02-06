@@ -81,7 +81,7 @@ const authConfig: NextAuthConfig = {
     },
 
     callbacks: {
-        jwt({ token, user}) {
+        jwt({ token, user }) {
             if(user) {
                 token.id = user.id;
                 token.rcsid = user.rcsid;
