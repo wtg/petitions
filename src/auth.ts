@@ -1,35 +1,48 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { getUserFromDb } from "./actions/user.actions";
+import { db } from "@/lib/db";
+import { Profile, OAuthProfile } from "@/lib/OAuthProfile";
+import { eq } from 'drizzle-orm';
+import { users } from '@/lib/schema';
 
-interface Profile {
-    sub: string,
-    name: string,
-    email: string,
-    picture: string,
+// extends the User object
+declare module "next-auth" {
+    interface User {
+        rcsid?: string;
+        initials?: string;
+    }
 }
 
 const authConfig: NextAuthConfig = {
     providers: [
         Credentials({
             credentials: {
-                name: { label: "Username" },
-                password: { label: "password" }
+                rcsid: { label: "RCSID", type: "text" }
             },
             async authorize(credentials) {
+                let rcsid = credentials?.rcsid as string;
 
-                const { name, password } = credentials;
+                if(!rcsid) {
+                    rcsid = Math.random().toString(36).substring(2, 8);
+                }
+                rcsid = rcsid.toLowerCase();
 
-                const res = await getUserFromDb(name as string, password as string);
+                const existedUser = await db.query.users.findFirst({
+                    where: eq(users.id, rcsid)
+                });
 
-                if(res.success) {
+                if(existedUser) {
                     return {
-                        id: res.data?.id,
-                        name: res.data?.name
-                    };
+                        rcsid: existedUser.id,
+                        initials: existedUser.initials
+                    } as Profile;
                 }
 
-                return null;
+                const initials = Math.random().toString(36).substring(2, 4).toUpperCase();
+                return {
+                    rcsid: rcsid,
+                    initials: initials,
+                } as Profile;
             }
         }),
         {
@@ -53,17 +66,11 @@ const authConfig: NextAuthConfig = {
                 url: 'https://shib.auth.rpi.edu/idp/profile/oidc/userinfo',
                 params: { grant_type: 'authorization_code' }
             },
-            profile(profile: Profile) {
-                console.log(profile);
-                console.log(profile.sub);
-                console.log(profile.name);
-                console.log(profile.email);
-                console.log(profile.picture);
+            profile(profile: OAuthProfile): Profile {
                 return {
                     id: profile.sub,
-                    name: profile.name,
-                    email: profile.email,
-                    image: profile.picture,
+                    rcsid: profile.preferred_username,
+                    initials: `${profile.given_name?.charAt(0)}${profile.family_name?.charAt(0)}`.toUpperCase()
                 };
             },
         }
@@ -77,12 +84,31 @@ const authConfig: NextAuthConfig = {
         jwt({ token, user }) {
             if(user) {
                 token.id = user.id;
+                token.rcsid = user.rcsid;
+                token.initials = user.initials;
             }
             return token;
         },
         session({ session, token }) {
             session.user.id = token.id as string;
+            session.user.rcsid = token.rcsid as string;
+            session.user.initials = token.initials as string;
             return session;
+        },
+        // user means id, rcsid, initials
+        // account means the account itself, the provider, type, id, etc
+        // profile means the oauth profile, should have all the data in OAuthProfile.OAuthProfile if it is oauth sign in
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        async signIn({ user, account, profile }) {
+            const rcsid = user.rcsid as string;
+            const initials = user.initials as string;
+
+            await db.insert(users).values({
+                id: rcsid,
+                initials: initials
+            }).onConflictDoNothing();
+
+            return true;
         }
     },
 };

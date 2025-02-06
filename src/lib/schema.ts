@@ -4,9 +4,7 @@ export const users = pgTable("users", {
     id: text("id")
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
-    name: text("name"),
-    // delete this password for production, we are not using password credential
-    password: text("password"),
+    initials: text("initials")
 });
 
 export const petitions = pgTable("petitions", {

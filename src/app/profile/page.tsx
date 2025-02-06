@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { SignOut } from '@/components/sign-out-button';
 
 export default async function ProfilePage() {
     const session = await auth();
@@ -9,6 +10,9 @@ export default async function ProfilePage() {
     }
 
     return (
-        <h1 className="text-9xl">Hello {session.user?.name}</h1>
+        <>
+            <h1 className="text-9xl">Hello {session.user?.rcsid}</h1>
+            <SignOut />
+        </>
     );
 }
