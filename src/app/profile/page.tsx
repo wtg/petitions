@@ -4,7 +4,9 @@ import { SignOut } from '@/components/sign-out-button';
 
 export default async function ProfilePage() {
     const session = await auth();
-    console.log(session?.user);
+
+    // console.log(session?.user);
+
     if(!session) {
         redirect('/api/auth/signin?callbackUrl=/profile');
     }
@@ -12,6 +14,7 @@ export default async function ProfilePage() {
     return (
         <>
             <h1 className="text-9xl">Hello {session.user?.rcsid}</h1>
+            <h1>Your initals are {session.user?.initials}</h1>
             <SignOut />
         </>
     );

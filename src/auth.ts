@@ -1,9 +1,8 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { db } from "@/lib/db";
-import { Profile, OAuthProfile } from "@/lib/OAuthProfile";
+import { db } from "@/app/db/index";
 import { eq } from 'drizzle-orm';
-import { users } from '@/lib/schema';
+import { users } from '@/app/db/schema';
 
 // extends the User object
 declare module "next-auth" {
@@ -11,6 +10,22 @@ declare module "next-auth" {
         rcsid?: string;
         initials?: string;
     }
+}
+
+// Some interfaces for profile objects
+interface OAuthProfile {
+    sub: string,
+    name: string,
+    preferred_username: string,
+    given_name: string,
+    family_name: string,
+    email: string,
+}
+
+interface Profile {
+    id: string,
+    rcsid: string,
+    initials?: string,
 }
 
 const authConfig: NextAuthConfig = {
@@ -27,14 +42,14 @@ const authConfig: NextAuthConfig = {
                 }
                 rcsid = rcsid.toLowerCase();
 
-                const existedUser = await db.query.users.findFirst({
+                const existingUser = await db.query.users.findFirst({
                     where: eq(users.id, rcsid)
                 });
 
-                if(existedUser) {
+                if(existingUser) {
                     return {
-                        rcsid: existedUser.id,
-                        initials: existedUser.initials
+                        rcsid: existingUser.id,
+                        initials: existingUser.initials
                     } as Profile;
                 }
 
