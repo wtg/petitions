@@ -10,7 +10,7 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
-    "@auth/drizzle-adapter": "^1.7.4",
+    "@auth/drizzle-adapter": "^1.10.0",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.38.3",
     "next": "15.3.4",
