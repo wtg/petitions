@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import '@/app/globals.css';
 
 export const metadata: Metadata = {
     title: 'RPI Petitions',
@@ -14,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body>
                 {children}
             </body>
