@@ -22,6 +22,9 @@ services:
     env_file:
       - .env
     command: sh -c "npx drizzle-kit push && npm run dev"
+    volumes:
+      - .:/app
+      - /app/node_modules
 
 volumes:
   postgres_data:

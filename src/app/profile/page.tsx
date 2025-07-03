@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import { SignOut } from '@/components/sign-out-button';
+import { SignOut } from '@/app/navbar/components/sign-out-button';
 
 export default async function ProfilePage() {
     const session = await auth();
