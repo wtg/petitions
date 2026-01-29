@@ -81,6 +81,39 @@ Visit [http://localhost:3000](http://localhost:3000) to see the app.
 | `BETTER_AUTH_URL` | Base URL for auth (http://localhost:3000) |
 | `NEXT_PUBLIC_BETTER_AUTH_URL` | Client-side auth URL |
 
+## Docker
+
+The project includes Docker support for both development and production environments.
+
+### Development with Docker Compose
+
+The easiest way to run the entire stack (app + PostgreSQL) locally:
+
+```bash
+# Start all services
+docker-compose up
+
+# Start in detached mode
+docker-compose up -d
+
+# View logs
+docker-compose logs -f app
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes (clean database)
+docker-compose down -v
+```
+
+This will:
+- Build the app using `Dockerfile.dev`
+- Start a PostgreSQL database
+- Mount your local files for hot-reloading
+- Expose the app at [http://localhost:3000](http://localhost:3000)
+
+For production Docker builds, see [README.docker.md](README.docker.md).
+
 ## License
 
 MIT
