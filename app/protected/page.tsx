@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function ProtectedPage() {
@@ -38,12 +39,12 @@ export default async function ProtectedPage() {
                         <p className="text-white font-medium">{session.user.name}</p>
                         <p className="text-slate-400 text-sm">{session.user.email}</p>
                     </div>
-                    <a
+                    <Link
                         href="/"
                         className="inline-block px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
                     >
                         ← Back to Home
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>
