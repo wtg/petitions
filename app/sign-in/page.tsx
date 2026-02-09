@@ -12,6 +12,7 @@ export default function SignInPage() {
     const [name, setName] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    console.log(process.env);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
