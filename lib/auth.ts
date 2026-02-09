@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
+import { genericOAuth } from "better-auth/plugins";
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -16,4 +17,16 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
+    plugins: [
+        genericOAuth({
+            config: [
+                {
+                    providerId: "shib",
+                    clientId: process.env.CLIENT_ID ?? "",
+                    clientSecret: process.env.CLIENT_SECRET,
+                    discoveryUrl: process.env.DISCOVERY_URL,
+                }
+            ]
+        })
+    ]
 });
