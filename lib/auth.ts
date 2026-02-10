@@ -26,6 +26,8 @@ export const auth = betterAuth({
                     clientId: process.env.CLIENT_ID ?? "",
                     clientSecret: process.env.CLIENT_SECRET,
                     discoveryUrl: process.env.DISCOVERY_URL,
+                    scopes: ["openid", "email", "profile"],
+                    pkce: true,
                 }
             ]
         })
