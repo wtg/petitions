@@ -5,10 +5,11 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function SignInPage() {
+export default function SignUpPage() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -18,12 +19,13 @@ export default function SignInPage() {
         setLoading(true);
 
         try {
-            const result = await authClient.signIn.email({
+            const result = await authClient.signUp.email({
                 email,
                 password,
+                name,
             });
             if (result.error) {
-                setError(result.error.message || "Sign in failed");
+                setError(result.error.message || "Sign up failed");
             } else {
                 router.push("/protected");
             }
@@ -40,14 +42,28 @@ export default function SignInPage() {
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/20 max-w-md w-full">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-white mb-2">
-                        Welcome Back
+                        Create Account
                     </h1>
                     <p className="text-slate-400">
-                        Sign in to your account
+                        Sign up to get started
                     </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-slate-300 mb-1">
+                            Name
+                        </label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            placeholder="Your name"
+                            required
+                        />
+                    </div>
+
                     <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1">
                             Email
@@ -88,38 +104,16 @@ export default function SignInPage() {
                         disabled={loading}
                         className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900"
                     >
-                        {loading ? "Loading..." : "Sign In"}
+                        {loading ? "Loading..." : "Sign Up"}
                     </button>
                 </form>
 
-                <div className="mt-6">
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-white/20"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-transparent text-slate-400">or</span>
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={() => authClient.signIn.oauth2({ providerId: "shib" })}
-                        className="mt-4 w-full py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 flex items-center justify-center gap-2"
-                    >
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-                        </svg>
-                        Sign in with University SSO
-                    </button>
-                </div>
-
                 <div className="mt-6 text-center">
                     <Link
-                        href="/sign-up"
+                        href="/sign-in"
                         className="text-slate-400 hover:text-white transition-colors"
                     >
-                        Don&apos;t have an account? Sign up
+                        Already have an account? Sign in
                     </Link>
                 </div>
             </div>
