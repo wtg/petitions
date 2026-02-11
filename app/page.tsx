@@ -1,13 +1,8 @@
 import { PetitionCard } from "@/components/petition-card";
 import Link from "next/link";
 
-const ERROR_MESSAGES: Record<string, string> = {
-  oauth_code_verification_failed:
-    "OAuth verification failed. The authorization code could not be verified. Please try signing in again.",
-};
-
 function ErrorBanner({ error }: { error: string }) {
-  const message = ERROR_MESSAGES[error] ?? `An unexpected error occurred: ${error}`;
+  const message = `Error: ${error}`;
 
   return (
     <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-3xl mx-auto mt-6">
