@@ -30,6 +30,8 @@ export const auth = betterAuth({
                     userInfoUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/userinfo",
                     scopes: ["openid", "email", "profile"],
                     getToken: async ({ code, redirectURI }) => {
+                        console.log('code', code);
+                        console.log('redirectURI', redirectURI);
                         // Example: GET request instead of POST
                         const response = await fetch(
                             `https://shib.auth.rpi.edu/idp/profile/oidc/token?` +
