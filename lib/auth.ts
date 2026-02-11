@@ -26,7 +26,7 @@ export const auth = betterAuth({
                     clientId: process.env.CLIENT_ID ?? "",
                     clientSecret: process.env.CLIENT_SECRET,
                     authorizationUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/authorize",
-                    // tokenUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/token",
+                    tokenUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/token",
                     userInfoUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/userinfo",
                     scopes: ["openid", "email", "profile"],
                     getToken: async ({ code, redirectURI }) => {
@@ -41,6 +41,8 @@ export const auth = betterAuth({
                             { method: "GET" }
                         );
                         const data = await response.json();
+                        console.log('status', response.status);
+                        console.log('data', data);
                         return {
                             accessToken: data.access_token,
                             refreshToken: data.refresh_token,
