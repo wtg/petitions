@@ -32,15 +32,22 @@ export const auth = betterAuth({
                     getToken: async ({ code, redirectURI }) => {
                         console.log('code', code);
                         console.log('redirectURI', redirectURI);
-                        // Example: GET request instead of POST
+
+                        const params = new URLSearchParams({
+                            client_id: process.env.CLIENT_ID ?? "",
+                            client_secret: process.env.CLIENT_SECRET ?? "",
+                            code,
+                            redirect_uri: redirectURI,
+                            grant_type: "authorization_code",
+                        });
+
                         const response = await fetch(
-                            `https://shib.auth.rpi.edu/idp/profile/oidc/token?` +
-                            `client_id=${process.env.CLIENT_ID}&` +
-                            `client_secret=${process.env.CLIENT_SECRET}&` +
-                            `code=${code}&` +
-                            `redirect_uri=${redirectURI}&` +
-                            `grant_type=authorization_code`,
-                            { method: "GET" }
+                            "https://shib.auth.rpi.edu/idp/profile/oidc/token",
+                            {
+                                method: "POST",
+                                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                                body: params.toString(),
+                            }
                         );
                         const data = await response.json();
                         console.log('status', response.status);
