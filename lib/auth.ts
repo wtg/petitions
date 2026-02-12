@@ -30,6 +30,7 @@ export const auth = betterAuth({
                     userInfoUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/userinfo",
                     scopes: ["openid", "email", "profile"],
                     authentication: 'basic',
+                    pkce: true,
                     // getToken: async ({ code, redirectURI }) => {
                     //     console.log('code', code);
                     //     console.log('redirectURI', redirectURI);
