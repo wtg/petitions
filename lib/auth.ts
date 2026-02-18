@@ -31,6 +31,7 @@ export const auth = betterAuth({
                     scopes: ["openid", "email", "profile"],
                     authentication: 'basic',
                     pkce: true,
+                    responseMode: "query",
                     // getToken: async ({ code, redirectURI }) => {
                     //     console.log('code', code);
                     //     console.log('redirectURI', redirectURI);
