@@ -57,9 +57,28 @@ export const auth = betterAuth({
                         return {
                             accessToken: data.access_token,
                             refreshToken: data.refresh_token,
+                            idToken: data.id_token,
                             accessTokenExpiresAt: new Date(Date.now() + data.expires_in * 1000),
                             scopes: data.scope?.split(" ") ?? [],
                             raw: data,
+                        };
+                    },
+                    getUserInfo: async (tokens) => {
+                        const response = await fetch(
+                            "https://shib.auth.rpi.edu/idp/profile/oidc/userinfo",
+                            {
+                                headers: {
+                                    "Authorization": `Bearer ${tokens.accessToken}`,
+                                },
+                            }
+                        );
+                        const data = await response.json();
+                        return {
+                            id: data.sub,
+                            email: data.email,
+                            name: data.name || data.preferred_username || data.given_name,
+                            image: data.picture,
+                            emailVerified: data.email_verified ?? false,
                         };
                     }
                 }
