@@ -29,6 +29,7 @@ export const auth = betterAuth({
                     tokenUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/token",
                     userInfoUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/userinfo",
                     scopes: ["openid", "email", "profile"],
+                    pkce: true,
                     responseMode: "query",
                     getToken: async ({ code, redirectURI, codeVerifier }) => {
                         const body = new URLSearchParams({
@@ -56,7 +57,13 @@ export const auth = betterAuth({
                                 body: body.toString(),
                             }
                         );
-                        const data = await response.json();
+                        const text = await response.text();
+                        console.log('[getToken] status:', response.status);
+                        console.log('[getToken] response:', text);
+                        if (!response.ok) {
+                            throw new Error(`Token request failed: ${response.status} ${text}`);
+                        }
+                        const data = JSON.parse(text);
                         return {
                             tokenType: data.token_type,
                             accessToken: data.access_token,
@@ -83,7 +90,13 @@ export const auth = betterAuth({
                                 },
                             }
                         );
-                        const data = await res.json();
+                        const text = await res.text();
+                        console.log('[getUserInfo] status:', res.status);
+                        console.log('[getUserInfo] response:', text);
+                        if (!res.ok) {
+                            throw new Error(`UserInfo request failed: ${res.status} ${text}`);
+                        }
+                        const data = JSON.parse(text);
                         return {
                             id: data.sub,
                             email: data.email,
