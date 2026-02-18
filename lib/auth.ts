@@ -29,41 +29,39 @@ export const auth = betterAuth({
                     tokenUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/token",
                     userInfoUrl: "https://shib.auth.rpi.edu/idp/profile/oidc/userinfo",
                     scopes: ["openid", "email", "profile"],
-                    authentication: 'basic',
                     pkce: true,
                     responseMode: "query",
-                    // getToken: async ({ code, redirectURI }) => {
-                    //     console.log('code', code);
-                    //     console.log('redirectURI', redirectURI);
+                    getToken: async ({ code, redirectURI }) => {
+                        const params = new URLSearchParams({
+                            code,
+                            redirect_uri: redirectURI,
+                            grant_type: "authorization_code",
+                        });
 
-                    //     const params = new URLSearchParams({
-                    //         client_id: process.env.CLIENT_ID ?? "",
-                    //         client_secret: process.env.CLIENT_SECRET ?? "",
-                    //         code,
-                    //         redirect_uri: redirectURI,
-                    //         grant_type: "authorization_code",
-                    //     });
+                        const credentials = Buffer.from(
+                            `${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`
+                        ).toString("base64");
 
-                    //     const response = await fetch(
-                    //         "https://shib.auth.rpi.edu/idp/profile/oidc/token",
-                    //         {
-                    //             method: "POST",
-                    //             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    //             body: params.toString(),
-                    //         }
-                    //     );
-                    //     const data = await response.json();
-                    //     console.log('status', response.status);
-                    //     console.log('data', data);
-                    //     return {
-                    //         accessToken: data.access_token,
-                    //         refreshToken: data.refresh_token,
-                    //         accessTokenExpiresAt: new Date(Date.now() + data.expires_in * 1000),
-                    //         scopes: data.scope?.split(" ") ?? [],
-                    //         // Preserve provider-specific fields in raw
-                    //         raw: data,
-                    //     };
-                    // }
+                        const response = await fetch(
+                            "https://shib.auth.rpi.edu/idp/profile/oidc/token",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/x-www-form-urlencoded",
+                                    "Authorization": `Basic ${credentials}`,
+                                },
+                                body: params.toString(),
+                            }
+                        );
+                        const data = await response.json();
+                        return {
+                            accessToken: data.access_token,
+                            refreshToken: data.refresh_token,
+                            accessTokenExpiresAt: new Date(Date.now() + data.expires_in * 1000),
+                            scopes: data.scope?.split(" ") ?? [],
+                            raw: data,
+                        };
+                    }
                 }
             ]
         })
