@@ -40,10 +40,15 @@ export const auth = betterAuth({
                         if (codeVerifier) {
                             body.set("code_verifier", codeVerifier);
                         }
-
+                        // RFC 6749: URL-encode client_id and secret before base64 for client_secret_basic
+                        const encodedId = encodeURIComponent(process.env.CLIENT_ID ?? "");
+                        const encodedSecret = encodeURIComponent(process.env.CLIENT_SECRET ?? "");
                         const credentials = Buffer.from(
-                            `${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`
+                            `${encodedId}:${encodedSecret}`
                         ).toString("base64");
+
+                        console.log('[getToken] client_id:', process.env.CLIENT_ID);
+                        console.log('[getToken] redirect_uri:', redirectURI);
 
                         const response = await fetch(
                             "https://shib.auth.rpi.edu/idp/profile/oidc/token",
