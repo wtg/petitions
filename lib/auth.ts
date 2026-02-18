@@ -40,7 +40,7 @@ export const auth = betterAuth({
                         if (codeVerifier) {
                             body.set("code_verifier", codeVerifier);
                         }
-                        // RFC 6749: URL-encode client_id and secret before base64 for client_secret_basic
+                        // RFC 6749: URL-encode client_id   and secret before base64 for client_secret_basic
                         const encodedId = encodeURIComponent(process.env.CLIENT_ID ?? "");
                         const encodedSecret = encodeURIComponent(process.env.CLIENT_SECRET ?? "");
                         const credentials = Buffer.from(
@@ -86,30 +86,30 @@ export const auth = betterAuth({
                             raw: data,
                         };
                     },
-                    getUserInfo: async (tokens) => {
-                        const res = await fetch(
-                            "https://shib.auth.rpi.edu/idp/profile/oidc/userinfo",
-                            {
-                                headers: {
-                                    Authorization: `Bearer ${tokens.accessToken}`,
-                                },
-                            }
-                        );
-                        const text = await res.text();
-                        console.log('[getUserInfo] status:', res.status);
-                        console.log('[getUserInfo] response:', text);
-                        if (!res.ok) {
-                            throw new Error(`UserInfo request failed: ${res.status} ${text}`);
-                        }
-                        const data = JSON.parse(text);
-                        return {
-                            id: data.sub,
-                            email: data.email,
-                            name: data.name || `${data.given_name ?? ""} ${data.family_name ?? ""}`.trim() || data.preferred_username,
-                            image: data.picture,
-                            emailVerified: data.email_verified ?? false,
-                        };
-                    },
+                    // getUserInfo: async (tokens) => {
+                    //     const res = await fetch(
+                    //         "https://shib.auth.rpi.edu/idp/profile/oidc/userinfo",
+                    //         {
+                    //             headers: {
+                    //                 Authorization: `Bearer ${tokens.accessToken}`,
+                    //             },
+                    //         }
+                    //     );
+                    //     const text = await res.text();
+                    //     console.log('[getUserInfo] status:', res.status);
+                    //     console.log('[getUserInfo] response:', text);
+                    //     if (!res.ok) {
+                    //         throw new Error(`UserInfo request failed: ${res.status} ${text}`);
+                    //     }
+                    //     const data = JSON.parse(text);
+                    //     return {
+                    //         id: data.sub,
+                    //         email: data.email,
+                    //         name: data.name || `${data.given_name ?? ""} ${data.family_name ?? ""}`.trim() || data.preferred_username,
+                    //         image: data.picture,
+                    //         emailVerified: data.email_verified ?? false,
+                    //     };
+                    // },
                 }
             ]
         })
